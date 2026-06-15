@@ -1,73 +1,220 @@
-# CryptoTrack — Live Crypto Price Tracker
+# 🚀 Crypto Market Dashboard
 
-A clean, responsive crypto price tracker built with **vanilla JavaScript**, HTML, and CSS. Uses the free [CoinGecko API](https://www.coingecko.com/en/api) — no API key required.
+A modern and responsive cryptocurrency tracking dashboard built with **Vanilla JavaScript**, providing real-time cryptocurrency prices, global market insights, watchlists, filtering, sorting, and multi-currency support using the CoinGecko API.
 
-![CryptoTrack Screenshot](screenshot.png)
+![GitHub repo size](https://img.shields.io/github/repo-size/ManjeetShaw/crypto-market-dashboard)
+![GitHub last commit](https://img.shields.io/github/last-commit/ManjeetShaw/crypto-market-dashboard)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-## Features
+---
 
-- **Live prices** for top 50 cryptocurrencies
-- **Search** coins by name or symbol
-- **Filter** by All / Watchlist / Gainers / Losers
-- **Sort** by rank, price, 24h change, or market cap
-- **Multi-currency** support: USD, EUR, INR, GBP
-- **Watchlist** — star coins and persist them via localStorage
-- **Price flash animation** — green/red flash when prices update
-- **Auto-refresh** every 60 seconds
-- **Global stats bar** — total market cap, volume, BTC dominance
-- Fully **responsive** for mobile
+## 📖 Overview
 
-## Tech Stack
+Crypto Market Dashboard is a lightweight and responsive web application that allows users to monitor live cryptocurrency prices and market trends in real time.
 
-- Vanilla JavaScript (ES6+)
-- HTML5 / CSS3
-- [CoinGecko Public API](https://www.coingecko.com/en/api/documentation) (free, no key)
-- `localStorage` for watchlist persistence
-- `Promise.all` for parallel API calls
+The project focuses on clean UI design, efficient API integration, client-side state management, and a smooth user experience without relying on external frameworks.
 
-## Getting Started
+---
 
-1. **Clone the repo**
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/crypto-tracker.git
-   cd crypto-tracker
-   ```
+## ✨ Features
 
-2. **Open in browser**
-   ```bash
-   # Option 1: just open the file
-   open index.html
+### 📈 Real-Time Market Data
 
-   # Option 2: use a local server (recommended)
-   npx serve .
-   # or
-   python3 -m http.server 3000
-   ```
+* Live cryptocurrency prices
+* Top 50 cryptocurrencies by market capitalization
+* Auto-refresh every 60 seconds
 
-3. That's it — no build step, no dependencies, no API key needed!
+### 🌍 Global Market Statistics
 
-## Project Structure
+* Total crypto market capitalization
+* 24-hour trading volume
+* Bitcoin dominance percentage
+* Active cryptocurrencies count
 
+### 🔍 Search & Discovery
+
+* Search by coin name
+* Search by symbol
+* Instant filtering
+
+### 📊 Advanced Sorting
+
+* Sort by Rank
+* Sort by Price
+* Sort by Market Cap
+* Sort by 24h Change
+
+### ⭐ Personal Watchlist
+
+* Add coins to favorites
+* LocalStorage persistence
+* Dedicated Watchlist view
+
+### 💱 Multi-Currency Support
+
+* USD ($)
+* EUR (€)
+* INR (₹)
+* GBP (£)
+
+### 🎨 User Experience
+
+* Responsive design
+* Loading states
+* Error handling
+* Empty states
+* Price movement animations
+* Modern dark-themed UI
+
+---
+
+## 🛠️ Tech Stack
+
+| Technology        | Purpose                     |
+| ----------------- | --------------------------- |
+| HTML5             | Structure                   |
+| CSS3              | Styling & Responsive Design |
+| JavaScript (ES6+) | Application Logic           |
+| CoinGecko API     | Cryptocurrency Data         |
+| LocalStorage      | Watchlist Persistence       |
+
+---
+
+## 📂 Project Structure
+
+```text
+crypto-market-dashboard/
+│
+├── index.html
+├── README.md
+├── LICENSE
+│
+├── css/
+│   └── style.css
+│
+├── js/
+│   └── app.js
+│
+└── assets/
+    ├── images/
+    └── screenshots/
 ```
-crypto-tracker/
-├── index.html   # Markup & layout
-├── style.css    # All styles (dark theme, responsive)
-├── app.js       # All logic: fetch, filter, sort, render
-└── README.md
+
+---
+
+## ⚡ Key Implementations
+
+### State Management
+
+The application uses a centralized state object to manage:
+
+* Cryptocurrency data
+* Search queries
+* Sorting preferences
+* Currency selection
+* Watchlist data
+
+### API Optimization
+
+* Parallel API requests using `Promise.all()`
+* Efficient filtering and sorting
+* Automatic refresh mechanism
+
+### Persistence
+
+User watchlists are stored using browser LocalStorage for a seamless experience across sessions.
+
+---
+
+## 📸 Screenshots
+
+### Dashboard
+
+```text
+Add screenshot here:
+assets/screenshots/dashboard.png
 ```
 
-## API Used
+### Watchlist
 
-**CoinGecko `/coins/markets`** — returns price, market cap, volume, 24h change, and coin icons for the top 50 coins in your chosen currency.
+```text
+Add screenshot here:
+assets/screenshots/watchlist.png
+```
 
-**CoinGecko `/global`** — returns global market stats (total market cap, BTC dominance, etc.)
+### Market Overview
 
-Both endpoints are completely free with no authentication.
+```text
+Add screenshot here:
+assets/screenshots/market-overview.png
+```
 
-## License
+---
 
-MIT
-=======
-# crypto-market-dashboard
-Real-time cryptocurrency dashboard featuring live prices, market statistics, watchlists, sorting, filtering, and multi-currency support powered by CoinGecko API.
->>>>>>> 15dec2444dc5fc05387f4b8c219958b6d9af1cab
+## 🚀 Getting Started
+
+### Clone Repository
+
+```bash
+git clone https://github.com/ManjeetShaw/crypto-market-dashboard.git
+```
+
+### Open Project
+
+```bash
+cd crypto-market-dashboard
+```
+
+Simply open:
+
+```text
+index.html
+```
+
+in your browser.
+
+No installation required.
+
+---
+
+## 🔗 API Used
+
+**CoinGecko Public API**
+
+* Free
+* No API Key Required
+* Real-Time Cryptocurrency Data
+
+---
+
+## 🎯 Future Enhancements
+
+* Interactive price charts
+* Historical price analysis
+* Coin detail pages
+* Dark/Light theme switch
+* Portfolio tracking
+* Price alerts
+* Market trend visualization
+
+---
+
+## 👨‍💻 Author
+
+**Manjeet Shaw**
+
+* GitHub: https://github.com/ManjeetShaw
+
+---
+
+## ⭐ Support
+
+If you found this project useful, consider giving it a star on GitHub.
+
+It helps the project reach more developers and motivates future improvements.
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License.
