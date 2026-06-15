@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CryptoTrack — Live Prices</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">◈</span>
+        <span class="logo-text">CryptoTrack</span>
+      </div>
+      <div class="header-meta">
+        <span id="last-updated">Fetching data...</span>
+        <button id="refresh-btn" title="Refresh prices">↻</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="hero">
+      <h1>Live Crypto Prices</h1>
+      <p class="subtitle">Real-time data powered by CoinGecko API</p>
+    </section>
+
+    <div class="controls">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Search Bitcoin, Ethereum, Shiba..."
+          autocomplete="off"
+        />
+      </div>
+      <div class="filter-tabs">
+        <button class="tab active" data-filter="all">All</button>
+        <button class="tab" data-filter="watchlist">★ Watchlist</button>
+        <button class="tab" data-filter="gainers">Gainers</button>
+        <button class="tab" data-filter="losers">Losers</button>
+      </div>
+      <select id="currency-select">
+        <option value="usd">USD $</option>
+        <option value="eur">EUR €</option>
+        <option value="inr">INR ₹</option>
+        <option value="gbp">GBP £</option>
+      </select>
+    </div>
+
+    <div class="stats-bar" id="stats-bar">
+      <div class="stat-item">
+        <span class="stat-label">Market Cap</span>
+        <span class="stat-value" id="total-market-cap">—</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-label">24h Volume</span>
+        <span class="stat-value" id="total-volume">—</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-label">BTC Dominance</span>
+        <span class="stat-value" id="btc-dominance">—</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-label">Active Coins</span>
+        <span class="stat-value" id="active-coins">—</span>
+      </div>
+    </div>
+
+    <div id="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Fetching live prices...</p>
+    </div>
+
+    <div id="error-msg" class="error-state hidden">
+      <p>⚠ Could not fetch data. Check your connection and try again.</p>
+      <button onclick="fetchData()">Retry</button>
+    </div>
+
+    <div id="empty-msg" class="empty-state hidden">
+      <p>No coins match your search.</p>
+    </div>
+
+    <div class="table-wrap">
+      <table id="crypto-table" class="hidden">
+        <thead>
+          <tr>
+            <th class="th-rank sortable" data-sort="rank"># <span class="sort-arrow">↕</span></th>
+            <th class="th-coin">Coin</th>
+            <th class="th-price sortable" data-sort="price">Price <span class="sort-arrow">↕</span></th>
+            <th class="th-change sortable" data-sort="change">24h % <span class="sort-arrow">↕</span></th>
+            <th class="th-mcap sortable th-hide-sm" data-sort="mcap">Market Cap <span class="sort-arrow">↕</span></th>
+            <th class="th-volume th-hide-sm">Volume (24h)</th>
+            <th class="th-watch">★</th>
+          </tr>
+        </thead>
+        <tbody id="crypto-body"></tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>Data from <a href="https://www.coingecko.com" target="_blank">CoinGecko</a> · Built with vanilla JS · No API key needed</p>
+  </footer>
+
+<script src="./js/app.js"></script>
+</body>
+</html>
