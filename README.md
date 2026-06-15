@@ -67,3 +67,7 @@ Both endpoints are completely free with no authentication.
 ## License
 
 MIT
+=======
+# crypto-market-dashboard
+Real-time cryptocurrency dashboard featuring live prices, market statistics, watchlists, sorting, filtering, and multi-currency support powered by CoinGecko API.
+>>>>>>> 15dec2444dc5fc05387f4b8c219958b6d9af1cab
