@@ -9,6 +9,10 @@ const state = {
   watchlist: JSON.parse(localStorage.getItem('watchlist') || '[]'),
   prevPrices: {},
 };
+const API_BASE = 'https://api.coingecko.com/api/v3';
+const API_KEY  = 'YOUR_COINGECKO_API_KEY_HERE';        // ← paste key here
+const API_HEADERS = { 'x-cg-demo-api-key': API_KEY };
+
 
 const SYMBOLS = { usd: '$', eur: '€', inr: '₹', gbp: '£' };
 let currentCoinId = null;
