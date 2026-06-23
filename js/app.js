@@ -9,31 +9,31 @@ const state = {
   watchlist: JSON.parse(localStorage.getItem('watchlist') || '[]'),
   prevPrices: {},
 };
-const API_BASE = 'https://api.coingecko.com/api/v3';
-const API_KEY  = 'CG-snyX7tFsZBaDhMr1FrSRLn6t';        // ← paste key here
-const API_HEADERS = { 'x-cg-demo-api-key': API_KEY };
 
+const API_BASE    = 'https://api.coingecko.com/api/v3';
+const API_KEY     = 'CG-snyX7tFsZBaDhMr1FrS1234RLn6t';
+const API_HEADERS = { 'x-cg-demo-api-key': API_KEY };
 
 const SYMBOLS = { usd: '$', eur: '€', inr: '₹', gbp: '£' };
 let currentCoinId = null;
 let priceChart = null;
 
 // ── DOM refs ───────────────────────────────────
-const tableEl      = document.getElementById('crypto-table');
-const tbodyEl      = document.getElementById('crypto-body');
-const loadingEl    = document.getElementById('loading');
-const errorEl      = document.getElementById('error-msg');
-const emptyEl      = document.getElementById('empty-msg');
-const searchEl     = document.getElementById('search-input');
-const currencyEl   = document.getElementById('currency-select');
-const refreshBtn   = document.getElementById('refresh-btn');
-const lastUpdEl    = document.getElementById('last-updated');
-const totalMcapEl  = document.getElementById('total-market-cap');
-const totalVolEl   = document.getElementById('total-volume');
-const btcDomEl     = document.getElementById('btc-dominance');
-const activeCoinsEl= document.getElementById('active-coins');
+const tableEl        = document.getElementById('crypto-table');
+const tbodyEl        = document.getElementById('crypto-body');
+const loadingEl      = document.getElementById('loading');
+const errorEl        = document.getElementById('error-msg');
+const emptyEl        = document.getElementById('empty-msg');
+const searchEl       = document.getElementById('search-input');
+const currencyEl     = document.getElementById('currency-select');
+const refreshBtn     = document.getElementById('refresh-btn');
+const lastUpdEl      = document.getElementById('last-updated');
+const totalMcapEl    = document.getElementById('total-market-cap');
+const totalVolEl     = document.getElementById('total-volume');
+const btcDomEl       = document.getElementById('btc-dominance');
+const activeCoinsEl  = document.getElementById('active-coins');
 const portfolioValEl = document.getElementById('portfolio-value');
-const trendingSec  = document.getElementById('trending-section');
+const trendingSec    = document.getElementById('trending-section');
 
 // ── Fetch data ─────────────────────────────────
 async function fetchData() {
@@ -41,15 +41,16 @@ async function fetchData() {
   try {
     const [coinsRes, globalRes] = await Promise.all([
       fetch(
-        `https://api.coingecko.com/api/v3/coins/markets` +
+        `${API_BASE}/coins/markets` +
         `?vs_currency=${state.currency}` +
         `&order=market_cap_desc` +
         `&per_page=50` +
         `&page=1` +
-        `&sparkline=true` +                // ← CHANGED: enabled sparkline
-        `&price_change_percentage=24h`
+        `&sparkline=true` +
+        `&price_change_percentage=24h`,
+        { headers: API_HEADERS }
       ),
-      fetch('https://api.coingecko.com/api/v3/global')
+      fetch(`${API_BASE}/global`, { headers: API_HEADERS })
     ]);
     if (!coinsRes.ok) throw new Error('API error');
     const coinsData  = await coinsRes.json();
@@ -76,16 +77,16 @@ function updateGlobalStats(data) {
   if (!data?.data) return;
   const d = data.data;
   const sym = SYMBOLS[state.currency];
-  totalMcapEl.textContent  = formatLarge(d.total_market_cap?.[state.currency], sym);
-  totalVolEl.textContent   = formatLarge(d.total_volume?.[state.currency], sym);
-  btcDomEl.textContent     = d.market_cap_percentage?.btc ? d.market_cap_percentage.btc.toFixed(1) + '%' : '—';
+  totalMcapEl.textContent   = formatLarge(d.total_market_cap?.[state.currency], sym);
+  totalVolEl.textContent    = formatLarge(d.total_volume?.[state.currency], sym);
+  btcDomEl.textContent      = d.market_cap_percentage?.btc ? d.market_cap_percentage.btc.toFixed(1) + '%' : '—';
   activeCoinsEl.textContent = d.active_cryptocurrencies?.toLocaleString() ?? '—';
 }
 
 // ── Trending ───────────────────────────────────
 async function loadTrending() {
   try {
-    const res = await fetch('https://api.coingecko.com/api/v3/search/trending');
+    const res  = await fetch(`${API_BASE}/search/trending`, { headers: API_HEADERS });
     const data = await res.json();
     const coins = data.coins.slice(0, 5);
     const html = `
@@ -125,17 +126,17 @@ function applyFilters() {
     const q = state.searchQuery.toLowerCase();
     coins = coins.filter(c => c.name.toLowerCase().includes(q) || c.symbol.toLowerCase().includes(q));
   }
-  if (state.filter === 'watchlist') coins = coins.filter(c => state.watchlist.includes(c.id));
-  else if (state.filter === 'gainers') coins = coins.filter(c => (c.price_change_percentage_24h ?? 0) > 0);
-  else if (state.filter === 'losers') coins = coins.filter(c => (c.price_change_percentage_24h ?? 0) < 0);
+  if (state.filter === 'watchlist')      coins = coins.filter(c => state.watchlist.includes(c.id));
+  else if (state.filter === 'gainers')   coins = coins.filter(c => (c.price_change_percentage_24h ?? 0) > 0);
+  else if (state.filter === 'losers')    coins = coins.filter(c => (c.price_change_percentage_24h ?? 0) < 0);
 
   coins.sort((a, b) => {
     let va, vb;
     switch (state.sortKey) {
       case 'rank':   va = a.market_cap_rank; vb = b.market_cap_rank; break;
-      case 'price':  va = a.current_price; vb = b.current_price; break;
+      case 'price':  va = a.current_price;   vb = b.current_price;   break;
       case 'change': va = a.price_change_percentage_24h ?? 0; vb = b.price_change_percentage_24h ?? 0; break;
-      case 'mcap':   va = a.market_cap; vb = b.market_cap; break;
+      case 'mcap':   va = a.market_cap;      vb = b.market_cap;      break;
       default:       va = a.market_cap_rank; vb = b.market_cap_rank;
     }
     return state.sortDir === 'asc' ? va - vb : vb - va;
@@ -144,7 +145,7 @@ function applyFilters() {
   renderTable();
 }
 
-// ── Sparkline generator ────────────────────────
+// ── Sparkline ──────────────────────────────────
 function generateSparkline(data, isUp) {
   if (!data || data.length < 2) return '—';
   const min = Math.min(...data);
@@ -166,16 +167,18 @@ function renderTable() {
   const sym = SYMBOLS[state.currency];
 
   tbodyEl.innerHTML = state.filtered.map(coin => {
-    const change  = coin.price_change_percentage_24h ?? 0;
-    const isUp    = change >= 0;
-    const watched = state.watchlist.includes(coin.id);
-    const prev    = state.prevPrices[coin.id];
+    const change   = coin.price_change_percentage_24h ?? 0;
+    const isUp     = change >= 0;
+    const watched  = state.watchlist.includes(coin.id);
+    const prev     = state.prevPrices[coin.id];
     let flashClass = '';
     if (prev !== null && prev !== undefined) {
-      if (coin.current_price > prev) flashClass = 'flash-up';
+      if (coin.current_price > prev)      flashClass = 'flash-up';
       else if (coin.current_price < prev) flashClass = 'flash-down';
     }
-    const sparkline = coin.sparkline_in_7d?.price ? generateSparkline(coin.sparkline_in_7d.price, isUp) : '<span style="color:#8892b0">—</span>';
+    const sparkline = coin.sparkline_in_7d?.price
+      ? generateSparkline(coin.sparkline_in_7d.price, isUp)
+      : '<span style="color:#8892b0">—</span>';
 
     return `
       <tr class="${flashClass}" data-id="${coin.id}">
@@ -216,29 +219,32 @@ async function openCoinModal(coinId) {
   document.getElementById('coinModal').classList.add('active');
   document.body.style.overflow = 'hidden';
   try {
-    const res = await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false`);
+    const res  = await fetch(
+      `${API_BASE}/coins/${coinId}?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false`,
+      { headers: API_HEADERS }
+    );
     const coin = await res.json();
-    const md = coin.market_data;
+    const md   = coin.market_data;
 
-    document.getElementById('modalIcon').src = coin.image.large;
-    document.getElementById('modalName').textContent = coin.name;
+    document.getElementById('modalIcon').src         = coin.image.large;
+    document.getElementById('modalName').textContent  = coin.name;
     document.getElementById('modalSymbol').textContent = coin.symbol.toUpperCase();
-    document.getElementById('modalPrice').textContent = formatPrice(md.current_price[state.currency], SYMBOLS[state.currency]);
+    document.getElementById('modalPrice').textContent  = formatPrice(md.current_price[state.currency], SYMBOLS[state.currency]);
     document.getElementById('modalMarketCap').textContent = formatLarge(md.market_cap[state.currency], SYMBOLS[state.currency]);
-    document.getElementById('modalVolume').textContent = formatLarge(md.total_volume[state.currency], SYMBOLS[state.currency]);
-    document.getElementById('modalSupply').textContent = `${(md.circulating_supply ?? 0).toLocaleString()} ${coin.symbol.toUpperCase()}`;
-    document.getElementById('modalRank').textContent = `#${coin.market_cap_rank || 'N/A'}`;
-    document.getElementById('modalATH').textContent = formatPrice(md.ath[state.currency], SYMBOLS[state.currency]);
-    document.getElementById('modalATHDate').textContent = new Date(md.ath_date[state.currency]).toLocaleDateString();
-    document.getElementById('modalATL').textContent = formatPrice(md.atl[state.currency], SYMBOLS[state.currency]);
-    document.getElementById('modalATLDate').textContent = new Date(md.atl_date[state.currency]).toLocaleDateString();
+    document.getElementById('modalVolume').textContent    = formatLarge(md.total_volume[state.currency], SYMBOLS[state.currency]);
+    document.getElementById('modalSupply').textContent    = `${(md.circulating_supply ?? 0).toLocaleString()} ${coin.symbol.toUpperCase()}`;
+    document.getElementById('modalRank').textContent      = `#${coin.market_cap_rank || 'N/A'}`;
+    document.getElementById('modalATH').textContent       = formatPrice(md.ath[state.currency], SYMBOLS[state.currency]);
+    document.getElementById('modalATHDate').textContent   = new Date(md.ath_date[state.currency]).toLocaleDateString();
+    document.getElementById('modalATL').textContent       = formatPrice(md.atl[state.currency], SYMBOLS[state.currency]);
+    document.getElementById('modalATLDate').textContent   = new Date(md.atl_date[state.currency]).toLocaleDateString();
     document.getElementById('modalDescription').innerHTML = coin.description?.en?.split('. ').slice(0,3).join('. ') + '.' || 'No description.';
-    document.getElementById('modalWebsite').href = coin.links?.homepage?.[0] || '#';
+    document.getElementById('modalWebsite').href          = coin.links?.homepage?.[0] || '#';
 
     const change = md.price_change_percentage_24h;
-    const chEl = document.getElementById('modalChange');
+    const chEl   = document.getElementById('modalChange');
     chEl.textContent = `${change >= 0 ? '▲' : '▼'} ${Math.abs(change).toFixed(2)}%`;
-    chEl.className = `modal-change ${change >= 0 ? 'positive' : 'negative'}`;
+    chEl.className   = `modal-change ${change >= 0 ? 'positive' : 'negative'}`;
 
     loadChart('7d');
   } catch (e) { console.error(e); }
@@ -251,21 +257,24 @@ async function loadChart(days) {
 
   const d = days === '24h' ? 1 : days === '7d' ? 7 : days === '30d' ? 30 : 365;
   try {
-    const res = await fetch(`https://api.coingecko.com/api/v3/coins/${currentCoinId}/market_chart?vs_currency=${state.currency}&days=${d}`);
+    const res  = await fetch(
+      `${API_BASE}/coins/${currentCoinId}/market_chart?vs_currency=${state.currency}&days=${d}`,
+      { headers: API_HEADERS }
+    );
     const data = await res.json();
-    const ctx = document.getElementById('priceChart').getContext('2d');
-    const isPos = data.prices[data.prices.length-1][1] >= data.prices[0][1];
+    const ctx  = document.getElementById('priceChart').getContext('2d');
+    const isPos = data.prices[data.prices.length - 1][1] >= data.prices[0][1];
     const color = isPos ? '#64ffda' : '#ff6b6b';
 
     priceChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: data.prices.map(p => ''),
+        labels: data.prices.map(() => ''),
         datasets: [{
           data: data.prices.map(p => p[1]),
           borderColor: color,
           backgroundColor: (ctx) => {
-            const grad = ctx.chart.ctx.createLinearGradient(0,0,0,300);
+            const grad = ctx.chart.ctx.createLinearGradient(0, 0, 0, 300);
             grad.addColorStop(0, color.replace(')', ', 0.2)').replace('rgb', 'rgba'));
             grad.addColorStop(1, 'rgba(0,0,0,0)');
             return grad;
@@ -276,10 +285,15 @@ async function loadChart(days) {
       },
       options: {
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false }, tooltip: {
-          callbacks: { label: (c) => formatPrice(c.raw, SYMBOLS[state.currency]) },
-          backgroundColor: 'rgba(11,15,31,0.9)', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1
-        }},
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: { label: (c) => formatPrice(c.raw, SYMBOLS[state.currency]) },
+            backgroundColor: 'rgba(11,15,31,0.9)',
+            borderColor: 'rgba(255,255,255,0.1)',
+            borderWidth: 1
+          }
+        },
         scales: { x: { display: false }, y: { display: false } }
       }
     });
@@ -302,7 +316,7 @@ function showState(which) {
 function formatPrice(n, sym) {
   if (n == null) return '—';
   if (n >= 1000) return sym + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  if (n >= 1) return sym + n.toFixed(4);
+  if (n >= 1)    return sym + n.toFixed(4);
   return sym + n.toFixed(6);
 }
 function formatLarge(n, sym) {
@@ -319,7 +333,9 @@ currencyEl.addEventListener('change', () => { state.currency = currencyEl.value;
 document.querySelectorAll('.tab').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active'); state.filter = btn.dataset.filter; applyFilters();
+    btn.classList.add('active');
+    state.filter = btn.dataset.filter;
+    applyFilters();
   });
 });
 document.querySelectorAll('th.sortable').forEach(th => {
@@ -336,7 +352,9 @@ tbodyEl.addEventListener('click', e => {
   const btn = e.target.closest('.btn-watch');
   if (btn) {
     const id = btn.dataset.id;
-    state.watchlist = state.watchlist.includes(id) ? state.watchlist.filter(x => x !== id) : [...state.watchlist, id];
+    state.watchlist = state.watchlist.includes(id)
+      ? state.watchlist.filter(x => x !== id)
+      : [...state.watchlist, id];
     localStorage.setItem('watchlist', JSON.stringify(state.watchlist));
     applyFilters();
     return;
